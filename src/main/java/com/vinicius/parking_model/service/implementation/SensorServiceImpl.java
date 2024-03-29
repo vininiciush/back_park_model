@@ -1,9 +1,13 @@
 package com.vinicius.parking_model.service.implementation;
 
+import com.vinicius.parking_model.domain.dto.ReceiveDTO;
 import com.vinicius.parking_model.domain.dto.SensorDTO;
+import com.vinicius.parking_model.domain.entity.DataEntity;
 import com.vinicius.parking_model.domain.entity.SensorEntity;
 import com.vinicius.parking_model.exception.ParkPositionAlreadyExistException;
+import com.vinicius.parking_model.exception.ParkPositionNotFoundException;
 import com.vinicius.parking_model.mapper.SensorMapper;
+import com.vinicius.parking_model.repository.DataRepository;
 import com.vinicius.parking_model.repository.SensorRepository;
 import com.vinicius.parking_model.service.SensorService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,8 @@ public class SensorServiceImpl implements SensorService {
     private final SensorMapper sensorMapper;
 
     private final SensorRepository sensorRepository;
+
+    private final DataRepository dataRepository;
 
     public SensorDTO createSensor(SensorDTO sensorDTO){
 
@@ -46,11 +52,27 @@ public class SensorServiceImpl implements SensorService {
         return sensorRepository.findAll(page).map(sensorMapper::toDTO);
     }
 
-    private void validateParkPositionIsValid(Integer parkPosition){
-        Optional<SensorEntity> sensorOptional = sensorRepository.findAllByPark(parkPosition);
+    @Override
+    public void receiveSensorData(ReceiveDTO receiveDTO) {
+        Optional<SensorEntity> sensorOptional = sensorRepository.findAllByPark(receiveDTO.getPark());
+
         if(sensorOptional.isPresent()){
-            throw new ParkPositionAlreadyExistException(parkPosition, "Cannot create 2 sensor with same park position");
+            DataEntity dataEntity = DataEntity.builder()
+                    .sensor(sensorOptional.get())
+                    .insertDate(LocalDateTime.now())
+                    .dataValue(receiveDTO.getValue())
+                    .build();
+
+            dataRepository.save(dataEntity);
+        }else {
+            throw new ParkPositionNotFoundException(receiveDTO.getPark(), "Park position not found");
         }
+    }
+
+    private void validateParkPositionIsValid(Integer parkPosition){
+        sensorRepository.findAllByPark(parkPosition).ifPresent(sensorEntity -> {
+            throw new ParkPositionAlreadyExistException(parkPosition, "Cannot create 2 sensor with same park position");
+        });
     }
 
 }
