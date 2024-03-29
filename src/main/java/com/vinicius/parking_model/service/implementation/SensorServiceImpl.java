@@ -1,5 +1,6 @@
 package com.vinicius.parking_model.service.implementation;
 
+import com.vinicius.parking_model.domain.dto.ChartLoadEntity;
 import com.vinicius.parking_model.domain.dto.ReceiveDTO;
 import com.vinicius.parking_model.domain.dto.SensorDTO;
 import com.vinicius.parking_model.domain.dto.SensorLoadDTO;
@@ -103,6 +104,49 @@ public class SensorServiceImpl implements SensorService {
         });
 
         return new PageImpl<>(sensorLoadDTOS, PageRequest.of(pageNumber, pageSize), sensor.getTotalElements());
+    }
+
+    @Override
+    public List<ChartLoadEntity> getLoadForParking(LocalDate date) {
+
+        List<ChartLoadEntity> chartLoadEntities = new ArrayList<>();
+        List<DataEntity> dataByDate = dataRepository.findAllByDate(date.atStartOfDay(), date.plusDays(1).atStartOfDay());
+        List<SensorEntity> sensors = sensorRepository.findAll();
+
+        for (int i = 0; i < 24; i++) {
+
+            ChartLoadEntity hourChart = ChartLoadEntity.builder()
+                    .time(i)
+                    .sensors(0)
+                    .build();
+
+            LocalDateTime startDateTime = date.atStartOfDay().plusHours(i);
+            LocalDateTime endDateTime = date.atStartOfDay().plusHours(i).plusMinutes(59);
+
+            List<DataEntity> hourData = dataByDate.stream()
+                    .filter(dataEntity -> dataEntity.getInsertDate().isAfter(startDateTime) && dataEntity.getInsertDate().isBefore(endDateTime))
+                    .toList();
+
+            sensors.stream().forEach(sensorEntity -> {
+                List<DataEntity> hourSensorData = hourData.stream()
+                        .filter(dataEntity -> dataEntity.getSensor().getPark().equals(sensorEntity.getPark()))
+                        .toList();
+
+                long totalData = hourSensorData.size();
+                long totalActiveData = hourSensorData.stream().filter(dataEntity -> dataEntity.getDataValue().equals(1)).count();
+
+                Integer loadForHour = calculateLoad(totalData, totalActiveData);
+
+                if(loadForHour >= 50){
+                    hourChart.setSensors(hourChart.getSensors() + 1);
+                }
+            });
+
+            chartLoadEntities.add(hourChart);
+
+        }
+
+        return chartLoadEntities;
     }
 
     @Override

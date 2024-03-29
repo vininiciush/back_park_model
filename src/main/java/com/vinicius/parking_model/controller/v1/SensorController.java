@@ -1,5 +1,6 @@
 package com.vinicius.parking_model.controller.v1;
 
+import com.vinicius.parking_model.domain.dto.ChartLoadEntity;
 import com.vinicius.parking_model.domain.dto.ReceiveDTO;
 import com.vinicius.parking_model.domain.dto.SensorDTO;
 import com.vinicius.parking_model.domain.dto.SensorLoadDTO;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/sensors")
@@ -47,6 +48,13 @@ public class SensorController {
         SensorDTO sensorDTO = service.deleteSensor(parkPosition);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(sensorDTO);
+    }
+
+    @GetMapping("/park/load")
+    public ResponseEntity<List<ChartLoadEntity>> getLoadForParking(@RequestParam(name = "date") LocalDate date){
+        List<ChartLoadEntity> loadForParking = service.getLoadForParking(date);
+
+        return ResponseEntity.ok(loadForParking);
     }
 
     @PostMapping("/receive")
