@@ -1,7 +1,9 @@
 package com.vinicius.parking_model.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
@@ -10,7 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 @lombok.Data
 @Table(name = "DATA")
-
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class DataEntity {
 
     @Id
