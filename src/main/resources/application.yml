@@ -1,0 +1,15 @@
+spring:
+    application:
+        name: parking_model
+
+    jpa:
+        hibernate:
+            ddl-auto: none
+            naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+    datasource:
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3301}/${MYSQL_DATABASE:park_model}
+        username: ${MYSQL_USER:default}
+        password: ${MYSQL_PASSWORD:default}
+        driver-class-name: com.mysql.cj.jdbc.Driver
