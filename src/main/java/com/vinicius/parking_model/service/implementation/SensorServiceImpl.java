@@ -7,6 +7,9 @@ import com.vinicius.parking_model.mapper.SensorMapper;
 import com.vinicius.parking_model.repository.SensorRepository;
 import com.vinicius.parking_model.service.SensorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,6 +37,13 @@ public class SensorServiceImpl implements SensorService {
         sensorEntity = sensorRepository.save(sensorEntity);
 
         return sensorMapper.toDTO(sensorEntity);
+    }
+
+    @Override
+    public Page<SensorDTO> getSensor(Integer pageNumber, Integer pageSize) {
+        Pageable page = PageRequest.of(pageNumber != null ? pageNumber : 0, pageSize != null ? pageSize : 10);
+
+        return sensorRepository.findAll(page).map(sensorMapper::toDTO);
     }
 
     private void validateParkPositionIsValid(Integer parkPosition){

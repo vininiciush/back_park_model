@@ -4,11 +4,11 @@ import com.vinicius.parking_model.domain.dto.SensorDTO;
 import com.vinicius.parking_model.service.implementation.SensorServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/sensors")
@@ -20,6 +20,13 @@ public class SensorController {
     @PostMapping
     public ResponseEntity<SensorDTO> createSensor(@Valid @RequestBody SensorDTO sensorDTO){
         SensorDTO sensor = service.createSensor(sensorDTO);
+
+        return ResponseEntity.ok(sensor);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<SensorDTO>> getSensors(@RequestParam(name = "page", required = false) Integer page, @RequestParam(name = "size", required = false) Integer size){
+        Page<SensorDTO> sensor = service.getSensor(page, size);
 
         return ResponseEntity.ok(sensor);
     }
