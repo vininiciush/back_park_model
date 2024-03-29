@@ -6,8 +6,11 @@ import com.vinicius.parking_model.service.implementation.SensorServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/sensors")
@@ -28,6 +31,13 @@ public class SensorController {
         Page<SensorDTO> sensor = service.getSensor(page, size);
 
         return ResponseEntity.ok(sensor);
+    }
+
+    @DeleteMapping("/{parkPosition}")
+    public ResponseEntity<SensorDTO> deleteSensor(@PathVariable Integer parkPosition){
+        SensorDTO sensorDTO = service.deleteSensor(parkPosition);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(sensorDTO);
     }
 
     @PostMapping("/receive")

@@ -36,14 +36,14 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(ParkPositionNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> handleParkSensorNotFoundException(ParkPositionNotFoundException e){
         ErrorDTO error = ErrorDTO.builder()
                 .message(e.getMessage())
                 .details("park positon " + e.getParkPosition() + " not found")
                 .build();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
 }

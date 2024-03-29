@@ -10,6 +10,7 @@ import com.vinicius.parking_model.mapper.SensorMapper;
 import com.vinicius.parking_model.repository.DataRepository;
 import com.vinicius.parking_model.repository.SensorRepository;
 import com.vinicius.parking_model.service.SensorService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +51,18 @@ public class SensorServiceImpl implements SensorService {
         Pageable page = PageRequest.of(pageNumber != null ? pageNumber : 0, pageSize != null ? pageSize : 10);
 
         return sensorRepository.findAll(page).map(sensorMapper::toDTO);
+    }
+
+    @Override
+    public SensorDTO deleteSensor(Integer parkPosition) {
+        Optional<SensorEntity> sensorOptional = sensorRepository.findAllByPark(parkPosition);
+
+        sensorOptional
+                .ifPresentOrElse(sensorRepository::delete, () -> {
+                    throw new ParkPositionNotFoundException(parkPosition, "Park position not found");
+                });
+
+        return sensorMapper.toDTO(sensorOptional.get());
     }
 
     @Override

@@ -10,6 +10,8 @@ public interface SensorService {
 
     Page<SensorDTO> getSensor(Integer pageNumber, Integer pageSize);
 
+    SensorDTO deleteSensor(Integer parkPosition);
+
     void receiveSensorData(ReceiveDTO receiveDTO);
 
 }
