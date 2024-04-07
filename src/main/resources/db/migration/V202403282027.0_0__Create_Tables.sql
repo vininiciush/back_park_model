@@ -1,5 +1,5 @@
 CREATE TABLE SENSOR (
-    ID varchar(100),
+    ID varchar(100) NOT NULL,
     PARK int,
     INSERT_DATE timestamp,
     ENABLE tinyint(1),
@@ -9,7 +9,7 @@ CREATE TABLE SENSOR (
 );
 
 CREATE TABLE DATA(
-    ID varchar(100),
+    ID varchar(100) NOT NULL,
     DATA_VALUE int,
     INSERT_DATE timestamp,
     SENSOR_ID varchar(100)
