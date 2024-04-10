@@ -13,4 +13,6 @@ public class SensorLoadDTO {
 
     private Integer load;
 
+    private Boolean isActive;
+
 }

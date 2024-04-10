@@ -86,6 +86,11 @@ public class SensorServiceImpl implements SensorService {
                     .filter(dataEntity -> dataEntity.getSensor().getPark().equals(sensorDTO.getPark()))
                     .toList();
 
+            Boolean isActive = dataEntityForSensor.stream()
+                    .findFirst()
+                    .map(dataEntity -> dataEntity.getDataValue() == 1)
+                    .orElse(false);
+
             long totalTimeData = dataEntityForSensor.size();
 
             long activeTimeData = dataEntityForSensor.stream()
@@ -97,6 +102,7 @@ public class SensorServiceImpl implements SensorService {
                     .id(sensorDTO.getId())
                     .park(sensorDTO.getPark())
                     .load(calculateLoad(totalTimeData, activeTimeData))
+                    .isActive(isActive)
                     .build();
 
             sensorLoadDTOS.add(sensorLoadDTO);

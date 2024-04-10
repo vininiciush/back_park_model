@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface DataRepository extends JpaRepository<DataEntity, String> {
 
-    @Query("SELECT de FROM DataEntity de WHERE de.insertDate >= :startDate and de.insertDate <= :endDate")
+    @Query("SELECT de FROM DataEntity de WHERE de.insertDate >= :startDate and de.insertDate <= :endDate ORDER BY de.insertDate desc")
     List<DataEntity> findAllByDate(@Param("startDate") LocalDateTime startDate,@Param("endDate") LocalDateTime endDate);
 
 }
